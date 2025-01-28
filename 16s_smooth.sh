@@ -24,7 +24,7 @@ function display_usage() {
     echo "Required arguemnts:"
     echo "  -s, --study_folder       Specify the name for the study included in this meta-analysis. (Required)"
     echo "  -n, --accession_number   Specify the accession number of the raw data at the ENA (Only used if --run_all or --run_download are provided)."
-    echo "  -a, --arguments          Path to file with arguemnts used on each software along the workflow"
+#    echo "  -a, --arguments          Path to file with arguemnts used on each software along the workflow"
     echo ""
     echo "Workflow arguments:"
     echo "  -r, --run_all            Run all steps of the workflow."
@@ -111,7 +111,7 @@ if [ "$run_all" = true ] || [ "$run_download" = true ]; then
 
     # DOWNLOAD DATA
     echo "PROGRESS -- Download raw data from ENA. Project accession number : ${accession_number}."
-    bash /home/bvalderrama/scripts/smooth_analysis/16s_scripts/fastqdl.sh ${current_wd}/${study_folder} ${accession_number} > ${study_folder}/nohups/download.out
+    bash /home/bvalderrama/scripts/16s_scripts/fastqdl.sh ${current_wd}/${study_folder} ${accession_number} > ${study_folder}/nohups/download.out
 fi
 
 
@@ -126,9 +126,8 @@ if [ "$run_all" = true ] || [ "$run_dada2" = true ]; then
     #source activate rbase41
     eval "$(micromamba shell hook --shell bash)"
     micromamba activate rbase44
-    Rscript /home/bvalderrama/scripts/smooth_analysis/16s_scripts/dada2.R ${current_wd}/${study_folder} > ${current_wd}/${study_folder}/nohups/dada2.out
+    Rscript /home/bvalderrama/scripts/16s_scripts/dada2.R ${current_wd}/${study_folder} > ${current_wd}/${study_folder}/nohups/dada2.out
     micromamba deactivate
-    #conda deactivate
 
     # save parameter used for dada2
 #    cp ${arguments} ${current_wd}/${study_folder}/nohups/workflow.args
@@ -140,9 +139,11 @@ if [ "$run_all" = true ] || [ "$run_picrust2" = true ]; then
 
     # RUN PICRUSt2 USING FILES PRODUCED IN THE PREVIOUS STEP
     echo "PROGRESS -- Performing functional inference with PICRUSt2"
-#    eval "$(micromamba shell hook --shell bash)"
+    eval "$(micromamba shell hook --shell bash)"
 #    micromamba activate picrust2
-    bash /home/bvalderrama/scripts/smooth_analysis/16s_scripts/PICRUSt2.sh ${current_wd}/${study_folder}
+    bash /home/bvalderrama/scripts/16s_scripts/PICRUSt2.sh ${current_wd}/${study_folder} > ${current_wd}/${study_folder}/nohups/picrust2.out
+#    micromamba deactivate
+
 fi
 
 
@@ -153,7 +154,7 @@ if [ "$run_all" = true ] || [ "$run_modules" = true ]; then
     echo "PROGRESS -- Calculating modules using the KO-based functional profiling."
     mkdir ${study_folder}/03.modules
 
-    bash /home/bvalderrama/scripts/smooth_analysis/16s_scripts/run_modules.sh ${current_wd}/${study_folder}/02.picrust2/output/KO_metagenome_out ${current_wd}/${study_folder}/03.modules -m GBMs,GMMs > ${current_wd}/${study_folder}/nohups/omixer.out
+    bash /home/bvalderrama/scripts/16s_scripts/run_modules.sh ${current_wd}/${study_folder}/02.picrust2/output/KO_metagenome_out ${current_wd}/${study_folder}/03.modules -m GBMs,GMMs > ${current_wd}/${study_folder}/nohups/omixer.out
 fi
 
-echo "PROGRESS -- WGS primary analysis finished."
+echo "PROGRESS -- 16S primary analysis finished."

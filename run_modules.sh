@@ -34,13 +34,13 @@ for module in "${modules[@]}"; do
     # Calculate stratified modules
     if [ -e "$input/pred_metagenome_contrib.tsv.gz" ]; then
         echo "RUN STRATIFIED ANALYSIS"
-        Rscript /home/bvalderrama/scripts/smooth_analysis/16s_scripts/stratified_omixer.R $input $output $module
+        Rscript /home/bvalderrama/scripts/16s_scripts/stratified_omixer.R $input $output $module
     fi
 
     # Calculate unstratified modules
     if [ -e "$input/pred_metagenome_unstrat.tsv.gz" ]; then
         echo "RUN UNSTRATIFIED ANALYSIS"
-        Rscript /home/bvalderrama/scripts/smooth_analysis/16s_scripts/unstratified_omixer.R $input $output $module
+        Rscript /home/bvalderrama/scripts/16s_scripts/unstratified_omixer.R $input $output $module
     fi
 
 done
