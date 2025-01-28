@@ -30,11 +30,19 @@ if(length(fastqFs) != length(fastqRs)) stop("Forward and reverse files do not ma
 print("FILTER AND TRIMMING ...")
 out <- filterAndTrim(fwd=file.path(pathF, fastqFs), filt=file.path(filtpathF, fastqFs),
               rev=file.path(pathR, fastqRs), filt.rev=file.path(filtpathR, fastqRs),
-              trimLeft=30,
-#	      trimRight=30,
-              truncLen = 150,
+              trimLeft=20,
+	      trimRight=20,
+#             truncLen = 150,
 	      maxEE=2, truncQ=2, maxN=0, rm.phix=TRUE,
               compress=TRUE, verbose=TRUE, multithread=TRUE)
+
+# Remove samples where all reads failed to pass the filter.
+#
+# These samples won't be used anyway, and keeping them will make
+# our script to fail later on, when tracking the reads of each
+# sample through the entire script.
+out <- out[out[, "reads.out"] > 0, ]
+
 
 filtFs <- list.files(filtpathF, pattern=".fastq.gz", full.names = TRUE) # HERE
 filtRs <- list.files(filtpathR, pattern=".fastq.gz", full.names = TRUE) # HERE
