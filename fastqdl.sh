@@ -6,12 +6,13 @@ accession=$2
 echo "DOWNLOADING DATA FROM : ${accession} , INTO : ${study_folder}/00.rawdata/"
 
 echo "fastq-dl START"
-source activate fastq-dl
+eval "$(micromamba shell hook --shell bash)"
+micromamba activate fastq-dl
 
 # the ${study_folder} variable is calling the entire pathway under the hood
 fastq-dl --accession ${accession} \
 	 --outdir "${study_folder}/00.rawdata" \
 	 --cpus 20 \
 
-conda deactivate
+micromamba deactivate
 echo "fastq-dl FINISHED"
